@@ -10,23 +10,25 @@ public class ResultBody {
      */
     private String code;
 
+    /*
+     * 成功标识
+     */
+    private Boolean success;
+
     /**
      * 响应消息
      */
     private String message;
 
+    /*
+     * 异常信息
+     */
+    private String execptionTrace;
+
     /**
      * 响应结果
      */
     private Object result;
-
-    public ResultBody() {
-    }
-
-    public ResultBody(BaseErrorInfoInterface errorInfo) {
-        this.code = errorInfo.getResultCode();
-        this.message = errorInfo.getResultMsg();
-    }
 
     public String getCode() {
         return code;
@@ -36,12 +38,28 @@ public class ResultBody {
         this.code = code;
     }
 
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getExecptionTrace() {
+        return execptionTrace;
+    }
+
+    public void setExecptionTrace(String execptionTrace) {
+        this.execptionTrace = execptionTrace;
     }
 
     public Object getResult() {
@@ -54,56 +72,38 @@ public class ResultBody {
 
     /**
      * 成功
-     *
-     * @return
-     */
-    public static ResultBody success() {
-        return success(null);
-    }
-
-    /**
-     * 成功
      * @param data
      * @return
      */
-    public static ResultBody success(Object data) {
+    public static ResultBody success(String code, String message, Object data) {
         ResultBody rb = new ResultBody();
-        rb.setCode(CommonEnum.SUCCESS.getResultCode());
-        rb.setMessage(CommonEnum.SUCCESS.getResultMsg());
+        rb.setCode(code);
+        rb.setSuccess(true);
+        rb.setMessage(message);
         rb.setResult(data);
         return rb;
     }
 
     /**
-     * 失败
+     * 异常
      */
-    public static ResultBody error(BaseErrorInfoInterface errorInfo) {
-        ResultBody rb = new ResultBody();
-        rb.setCode(errorInfo.getResultCode());
-        rb.setMessage(errorInfo.getResultMsg());
-        rb.setResult(null);
-        return rb;
-    }
-
-    /**
-     * 失败
-     */
-    public static ResultBody error(String code, String message) {
+    public static ResultBody error(String code, String message, String exceptionMsg) {
         ResultBody rb = new ResultBody();
         rb.setCode(code);
+        rb.setSuccess(false);
         rb.setMessage(message);
-        rb.setResult(null);
+        rb.setExecptionTrace(exceptionMsg);
         return rb;
     }
 
     /**
      * 失败
      */
-    public static ResultBody error( String message) {
+    public static ResultBody failed(String code, String message) {
         ResultBody rb = new ResultBody();
-        rb.setCode("-1");
+        rb.setCode(code);
+        rb.setSuccess(false);
         rb.setMessage(message);
-        rb.setResult(null);
         return rb;
     }
 

@@ -1,16 +1,11 @@
 package com.lzos.steels.admin.common;
 
-import com.lzos.steels.admin.exception.BaseErrorInfoInterface;
-
-public enum CommonEnum implements BaseErrorInfoInterface {
+public enum CommonEnum {
 
     // 数据操作错误定义
-    SUCCESS("200", "成功!"),
-    BODY_NOT_MATCH("400","请求的数据格式不符!"),
-    SIGNATURE_NOT_MATCH("401","请求的数字签名不匹配!"),
-    NOT_FOUND("404", "未找到该资源!"),
-    INTERNAL_SERVER_ERROR("500", "服务器内部错误!"),
-    SERVER_BUSY("503","服务器正忙，请稍后再试!")
+    SUCCESS("1", "请求成功!"),
+    ERROR("-1", "系统异常"),
+    FAILED("-1", "请求失败")
     ;
 
     /** 错误码 */
@@ -24,13 +19,19 @@ public enum CommonEnum implements BaseErrorInfoInterface {
         this.resultMsg = resultMsg;
     }
 
-    @Override
     public String getResultCode() {
         return resultCode;
     }
 
-    @Override
+    public void setResultCode(String resultCode) {
+        this.resultCode = resultCode;
+    }
+
     public String getResultMsg() {
         return resultMsg;
+    }
+
+    public void setResultMsg(String resultMsg) {
+        this.resultMsg = resultMsg;
     }
 }
