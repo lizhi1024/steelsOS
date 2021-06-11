@@ -34,10 +34,10 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(value =Exception.class)
+    @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResultBody exceptionHandler(HttpServletRequest req, Exception e){
-        logger.error("系统异常！原因是: {}", e.getMessage());
+        logger.error("系统异常！原因是: {}", e);
         return ResultBody.error(CommonEnum.ERROR.getResultCode(), CommonEnum.ERROR.getResultMsg(), e.getMessage());
     }
 

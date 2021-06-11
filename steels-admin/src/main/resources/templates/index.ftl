@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <title>首页</title>
-</head>
-<body>
-</body>
-</html>
+<#include "./common/main.ftl"  />
+<@layout "首页">
+
+    <div class="layui-container"><#---->
+        <div class="layui-row layui-col-space15">
+            111111111111111111111
+        </div>
+    </div>
+
+</@layout>

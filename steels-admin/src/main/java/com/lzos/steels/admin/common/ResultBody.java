@@ -1,7 +1,6 @@
 package com.lzos.steels.admin.common;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lzos.steels.admin.exception.BaseErrorInfoInterface;
 
 public class ResultBody {
 

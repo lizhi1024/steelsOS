@@ -1,5 +1,7 @@
 package com.lzos.steels.admin.controller;
 
+import com.lzos.steels.admin.common.CommonEnum;
+import com.lzos.steels.admin.common.ResultBody;
 import com.lzos.steels.admin.entity.dto.User;
 import com.lzos.steels.admin.service.LoginService;
 import org.apache.ibatis.annotations.Param;
@@ -24,8 +26,9 @@ public class LoginController {
 
     @GetMapping("/doLogin.json")
     @ResponseBody
-    public User doLogin(@Param("id") int id) {
-        return loginService.doLogin(id);
+    public ResultBody doLogin(@Param("id") int id) {
+        User user = loginService.doLogin(id);
+        return ResultBody.success(CommonEnum.SUCCESS.getResultCode(), "登录成功", user);
     }
 
 }
