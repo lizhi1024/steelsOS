@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>量子创新创业平台</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- icon -->
+    <link rel="shortcut icon" href="http://localhost:8098/static/image/favicon.ico" />
+
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
 </head>
 <body style="background-image: url(/static/image/lgbg.jpg);background-size:cover;">
 
@@ -74,6 +81,7 @@
 </div>
 
 <script src="/static/jQuery/jQuery-2.2.0.min.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script>
     //Demo
     layui.use('form', function(){
