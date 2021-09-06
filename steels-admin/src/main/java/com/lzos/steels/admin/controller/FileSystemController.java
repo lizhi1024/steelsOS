@@ -40,10 +40,10 @@ public class FileSystemController {
      * @return ResultBody
      * @throws Exception
      */
-    @PostMapping("/uploadFile.json")
-    public ResultBody uploadFile(@RequestParam("files") MultipartFile[] files) throws Exception {
+    @PostMapping(value = "/uploadFile.json")
+    public ResultBody uploadFile(HttpServletRequest request, MultipartFile[] files) throws Exception {
 
-        if (files.length == 0 || files == null) {
+        if (files == null || files.length == 0) {
             throw new BizException("1002", "上传文件为空,请选择上传文件");
         }
         ArrayList<FileVo> fileVos = new ArrayList<>();
@@ -72,12 +72,12 @@ public class FileSystemController {
      * @throws Exception
      */
     @GetMapping("/download.json")
-    public String downloadFile(HttpServletResponse response, @Param("file") String file) throws Exception {
-        return fileSystemService.downloadFile(response, file);
+    public void downloadFile(HttpServletResponse response, @Param("file") String file) throws Exception {
+        fileSystemService.downloadFile(response, file);
     }
 
     @PostMapping("/delete.json")
-    public ResultBody deleteFiles(HttpServletRequest request, @RequestParam("test") String test) {
+    public void deleteFiles(HttpServletRequest request, @RequestBody String test) {
 
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -88,7 +88,6 @@ public class FileSystemController {
 
         System.out.println(test);
 
-        return null;
     }
 
     /**

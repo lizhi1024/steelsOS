@@ -1,19 +1,19 @@
 package com.lzos.steels.admin.controller;
 
-import com.lzos.steels.admin.utils.HttpClientUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-@RestController
-@RequestMapping("/test")
+@Controller
+@RequestMapping("/cloudide/callback")
+@Slf4j
 public class DemoController {
 
-    @RequestMapping("demo.json")
-    public String demo(HttpServletRequest request, HttpServletResponse response) {
-        return "";
+    @GetMapping("/start")
+    public String startCallBack(@RequestParam("instanceId") String instanceId) {
+        System.out.println("1111111111111");
+        return "11111111";
     }
 
 }

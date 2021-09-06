@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -26,9 +29,13 @@ public class LoginController {
 
     @GetMapping("/doLogin.json")
     @ResponseBody
-    public ResultBody doLogin(@Param("id") int id) {
-        User user = loginService.doLogin(id);
-        return ResultBody.success(CommonEnum.SUCCESS.getResultCode(), "登录成功", user);
+    public ResultBody doLogin(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            String s = cookies[0].getName() + cookies[0].getValue();
+            System.out.println(s);
+        }
+        return ResultBody.success(CommonEnum.SUCCESS.getResultCode(), "登录成功", null);
     }
 
 }

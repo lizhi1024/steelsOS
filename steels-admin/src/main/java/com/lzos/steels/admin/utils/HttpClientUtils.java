@@ -1,10 +1,7 @@
 package com.lzos.steels.admin.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.http.HttpConnection;
-import org.apache.http.HttpConnectionFactory;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,8 +12,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -37,6 +34,15 @@ import java.util.Set;
 public class HttpClientUtils {
 
     private static HttpClientUtils httpClient;
+
+    private static final String GET = "GET";
+
+    private static final String POST = "POST";
+
+    private static final String LINK = "?";
+
+    @Value("${ide.server.entryPoint}")
+    private String entryPoint;
 
     public static HttpClientUtils getInstance() {
         if (httpClient == null) {
@@ -364,67 +370,67 @@ public class HttpClientUtils {
      * @return
      * @throws Exception
      */
-    public static Map<String, Object> getPostParamsMap(HttpServletRequest request) throws Exception{
-
-        Gson gson = new Gson();
-        String type = request.getContentType();
-
-        Map<String, Object> paramsMap = new HashMap<String, Object>();
-        Map<String, String> dataMap = new HashMap<String,String>();
-        Map<String, MultipartFile> fileMap = null;
-
-        if ("application/x-www-form-urlencoded".equals(type)){
-
-            Enumeration<String> enu = request.getParameterNames();
-            while (enu.hasMoreElements()) {
-                String key = String.valueOf(enu.nextElement());
-                String value = request.getParameter(key);
-                dataMap.put(key, value);
-            }
-
-        } else if (type.contains("multipart/form-data")) {
-
-            Enumeration<String> enu = request.getParameterNames();
-            while (enu.hasMoreElements()) {
-                String key = String.valueOf(enu.nextElement());
-                String value = request.getParameter(key);
-                dataMap.put(key, value);
-            }
-
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            fileMap = multipartRequest.getFileMap();
-
-        } else {//else是text/plain、application/json这两种情况
-
-            BufferedReader reader = null;
-            StringBuilder sb = new StringBuilder();
-            try{
-                reader = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-                String line = null;
-                while ((line = reader.readLine()) != null){
-                    sb.append(line);
-                }
-            } catch (IOException e){
-                throw e;
-            } finally {
-                try{
-                    if (null != reader){
-                        reader.close();
-                    }
-                } catch (IOException e){
-                    throw e;
-                }
-            }
-            //把JSON字符串转为对象
-            dataMap = gson.fromJson(sb.toString(), new TypeToken<Map<String, String>>(){}.getType());
-
-        }
-
-        paramsMap.put("dataMap", dataMap);
-        paramsMap.put("filesMap", fileMap);
-
-        return paramsMap;
-    }
+//    public static Map<String, Object> getPostParamsMap(HttpServletRequest request) throws Exception{
+//
+//        Gson gson = new Gson();
+//        String type = request.getContentType();
+//
+//        Map<String, Object> paramsMap = new HashMap<String, Object>();
+//        Map<String, String> dataMap = new HashMap<String,String>();
+//        Map<String, MultipartFile> fileMap = null;
+//
+//        if ("application/x-www-form-urlencoded".equals(type)){
+//
+//            Enumeration<String> enu = request.getParameterNames();
+//            while (enu.hasMoreElements()) {
+//                String key = String.valueOf(enu.nextElement());
+//                String value = request.getParameter(key);
+//                dataMap.put(key, value);
+//            }
+//
+//        } else if (type.contains("multipart/form-data")) {
+//
+//            Enumeration<String> enu = request.getParameterNames();
+//            while (enu.hasMoreElements()) {
+//                String key = String.valueOf(enu.nextElement());
+//                String value = request.getParameter(key);
+//                dataMap.put(key, value);
+//            }
+//
+//            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+//            fileMap = multipartRequest.getFileMap();
+//
+//        } else {//else是text/plain、application/json这两种情况
+//
+//            BufferedReader reader = null;
+//            StringBuilder sb = new StringBuilder();
+//            try{
+//                reader = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+//                String line = null;
+//                while ((line = reader.readLine()) != null){
+//                    sb.append(line);
+//                }
+//            } catch (IOException e){
+//                throw e;
+//            } finally {
+//                try{
+//                    if (null != reader){
+//                        reader.close();
+//                    }
+//                } catch (IOException e){
+//                    throw e;
+//                }
+//            }
+//            //把JSON字符串转为对象
+//            dataMap = gson.fromJson(sb.toString(), new TypeToken<Map<String, String>>(){}.getType());
+//
+//        }
+//
+//        paramsMap.put("dataMap", dataMap);
+//        paramsMap.put("filesMap", fileMap);
+//
+//        return paramsMap;
+//    }
 
     /**
      * 获取请求头参数
@@ -443,11 +449,49 @@ public class HttpClientUtils {
         return paramsMap;
     }
 
-    public void httpTest(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void httpProxy(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse closeableHttpResponse = null;
 
+        String method = request.getMethod();
+        String requestUri = request.getRequestURI();
+        String requestUrl = entryPoint + requestUri;
+        Map<String, String> headerParamsMap = getHeaderParamsMap(request);
 
+        try {
+
+            switch (method) {
+                case GET:
+                    HttpGet httpGet = new HttpGet("http://localhost:8098/file/download.json?file=2045009.jpg");
+                    setGetHead(httpGet, headerParamsMap);
+                    closeableHttpResponse = httpclient.execute(httpGet);
+                    HttpEntity entity = closeableHttpResponse.getEntity();
+                    response.reset();
+                    for (Header header : closeableHttpResponse.getAllHeaders()) {
+                        if (!header.getValue().equals("chunked") && !header.getValue().equals("keep-alive")) {
+                            response.setHeader(header.getName(), header.getValue());
+                        }
+                    }
+                    entity.writeTo(response.getOutputStream());
+                    EntityUtils.consume(entity);
+                    break;
+                case POST:
+                    break;
+                default:
+                    System.out.println("no METHOD");
+            }
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (httpclient != null) {
+                httpclient.close();
+            }
+            if (closeableHttpResponse != null) {
+                closeableHttpResponse.close();
+            }
+        }
 
     }
 }

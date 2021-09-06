@@ -17,7 +17,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        HttpClientUtils.getInstance().httpTest(request, response);
+        HttpClientUtils.getInstance().httpProxy(request, response);
+
         //业务代码
         return false;
     }
