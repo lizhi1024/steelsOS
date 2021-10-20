@@ -41,7 +41,7 @@ public class FileSystemController {
      * @throws Exception
      */
     @PostMapping(value = "/uploadFile.json")
-    public ResultBody uploadFile(HttpServletRequest request, MultipartFile[] files) throws Exception {
+    public ResultBody uploadFile(HttpServletRequest request, Integer userId, MultipartFile[] files) throws Exception {
 
         if (files == null || files.length == 0) {
             throw new BizException("1002", "上传文件为空,请选择上传文件");
